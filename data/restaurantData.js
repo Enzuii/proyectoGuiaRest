@@ -1,6 +1,6 @@
 export const restaurantData = [
     {
-        name: '',
+        name: 'McDonalds',
         image: 'https://7am.events/magazine/wp-content/uploads/2023/05/ovo-nightclub-punta-del-este.png',
         description: 'Baile, comida y bebida',
     },

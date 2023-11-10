@@ -2,14 +2,14 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 
 function DetailsScreen({ route }) {
-  const { item } = route.params;
+  const { restaurant } = route.params || {};
+  const restaurantName = restaurant ? restaurant.name : 'Nombre no disponible';
 
   return (
     <View>
-      <Text>{item.name}</Text>
-      <Image source={{ uri: item.image }} style={{ width: 400, height: 400 }} />
-      <Text>{item.caption}</Text>
-      <Text>{item.description}</Text>
+      <Text>{restaurantName}</Text>
+      <Image source={{ uri: restaurant.image }} style={{ width: 400, height: 400 }} />
+      <Text>jeje</Text>
     </View>
   );
 }

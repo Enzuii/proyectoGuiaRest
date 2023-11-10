@@ -7,39 +7,48 @@ import {
     Image,
     Pressable,
     Dimensions,
+    TextInput,
+    FlatList,
 } from 'react-native';
-import React, { useState, useContext } from 'react';
-import Autocomplete from 'react-native-autocomplete-input';
+import React, { useState, useContext} from 'react';
 import Carousel from 'react-native-snap-carousel';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { storeContext } from './StoreProvider';
-
-const restaurantData = ['McDonalds', 'Burger King', 'Mi Sushi'];
 
 const itemsPerInterval = 5;
 
 const width = Dimensions.get('window').width;
 
 function HomeScreen({ navigation }) {
-
-    const [selected, setSelected] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
-
     const [store, dispatch] = useContext(storeContext);
 
-    const handleAutocomplete = (text) => {
-        setSelected(text);
-        const filteredSuggestions = store.autoComplete.filter((item) =>
-            item.toLowerCase().includes(text.toLowerCase())
+    const [searchText, setSearchText] = useState('');
+    const [suggestionsList, setSuggestionsList] = useState([]);
+    
+    const getSuggestions = (query) => {
+        const filteredSuggestions = store.restaurant.filter((restaurant) =>
+        restaurant.name.toLowerCase().includes(query.toLowerCase())
         );
-        setSuggestions(filteredSuggestions);
+        setSuggestionsList(filteredSuggestions);
+    };
+    
+    const handleAutocompletePress = (restaurant) => {
+        navigation.navigate('Details', { restaurant });
+    };
+        
+
+    const handleSearch = (text) => {
+        setSearchText(text);
+        getSuggestions(text);
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAwareScrollView 
+            <KeyboardAwareScrollView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}>
+                style={{ flex: 1 }}
+                keyboardShouldPersistTaps ='always'
+            >
                     <Text style={styles.text}>Guia Rest</Text>
                     <Text>{"\n"}</Text>
                     <Carousel
@@ -49,7 +58,7 @@ function HomeScreen({ navigation }) {
                         renderItem={({ item }) => (
                             <View>
                                 <Pressable onPress={() => {
-                                    navigation.navigate('ShowDetails', { item });
+                                    navigation.navigate('Details', { restaurant: item });
                                 }}>
                                     <Image
                                         source={{ uri: item.image }}
@@ -64,20 +73,28 @@ function HomeScreen({ navigation }) {
                         itemWidth={400}
                     />
                     <Text>{"\n"}</Text>
-                    <Autocomplete
-                        data={suggestions}
-                        value={selected}
-                        flatListProps={{
-                            keyExtractor: (_, idx) => idx.toString(),
-                            renderItem: ({ item }) => <Text>{item}</Text>,
-                        }}
-                        onPress={() => {
-                            navigation.navigate('RestaurantDetails', { item: { name: selected } });
-                        }}
-                        onChangeText={handleAutocomplete}
-                        placeholder="Search for a restaurant"
-                    />
-
+                    <View>
+                        <TextInput
+                            style={{
+                            height: 40,
+                            borderColor: 'gray',
+                            borderWidth: 1,
+                            paddingLeft: 10,
+                            }}
+                            placeholder="Búsqueda"
+                            value={searchText}
+                            onChangeText={handleSearch}
+                        />
+                        <FlatList
+                            data={suggestionsList}
+                            keyExtractor={(_,item) => item.toString()}
+                            renderItem={({ item }) => (
+                                <Pressable onPress={() => handleAutocompletePress(item)}>
+                                    <Text>{item.name}</Text>
+                                </Pressable>
+                            )}                            
+                        />
+                    </View>
                     <Text>{"\n"}</Text>
                     <Text>{"\n"}</Text>
                     <Carousel
@@ -91,7 +108,7 @@ function HomeScreen({ navigation }) {
                         renderItem={({ item }) => (
                             <View>
                                 <Pressable onPress={() => {
-                                    navigation.navigate('ShowDetails', { item });
+                                    navigation.navigate('Details', { item });
                                 }}>
                                     <Image
                                         source={{ uri: item.image }}
@@ -104,15 +121,7 @@ function HomeScreen({ navigation }) {
                     />
                     <Text>{"\n"}</Text>
                     <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text><Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text><Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-            </KeyboardAwareScrollView>
+                </KeyboardAwareScrollView>
 
         </SafeAreaView >
 
