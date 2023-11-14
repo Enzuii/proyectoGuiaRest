@@ -8,6 +8,7 @@ import {
     Dimensions,
     TextInput,
     FlatList,
+    TouchableWithoutFeedback
 } from 'react-native';
 import React, { useState, useContext } from 'react';
 import Carousel from 'react-native-snap-carousel';
@@ -40,113 +41,144 @@ function HomeScreen({ navigation }) {
         getSuggestions(text);
     };
 
+    const dismissSuggestions = () => {
+        // Limpiar la lista de sugerencias cuando el usuario toca fuera del input
+        setSuggestionsList([]);
+    };
+
     return (
-        <SafeAreaView style={styles.container}>
-            <KeyboardAwareScrollView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-                keyboardShouldPersistTaps='always'
-            >
-                <Text style={styles.text}>Guia Rest</Text>
-                <Text>{"\n"}</Text>
-                <Carousel
-                    data={store.show}
-                    autoPlay={true}
-                    scrollAnimationDuration={1000}
-                    renderItem={({ item }) => (
-                        <View>
-                            <Pressable onPress={() => {
-                                navigation.navigate('Details', { restaurant: item });
-                            }}>
-                                <Image
-                                    source={{ uri: item.image }}
-                                    width={width}
-                                    height={width / 1.2}
-                                />
-                            </Pressable>
-                            <Text>{item.caption}</Text>
-                        </View>
-                    )}
-                    sliderWidth={400}
-                    itemWidth={400}
-                />
-                <Text>{"\n"}</Text>
-                <View>
-                    <TextInput
-                        style={{
-                            height: 40,
-                            borderColor: 'gray',
-                            borderWidth: 1,
-                            paddingLeft: 10,
-                            borderRadius: 10,
-                        }}
-                        placeholder="Búsqueda"
-                        value={searchText}
-                        onChangeText={handleSearch}
-                    />
-                    <FlatList
-                        data={suggestionsList}
-                        keyExtractor={(_, item) => item.toString()}
+        <TouchableWithoutFeedback onPress={dismissSuggestions}>
+            <SafeAreaView style={styles.container}>
+                <KeyboardAwareScrollView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                    keyboardShouldPersistTaps='always'
+                >
+                    <Text style={styles.headerText}>Guía Rest</Text>
+                    <Carousel
+                        loop={true}
+                        autoplay={true}
+                        data={store.show}
+                        autoPlay={true}
+                        scrollAnimationDuration={1000}
                         renderItem={({ item }) => (
-                            <Pressable onPress={() => handleAutocompletePress(item)}>
-                                <Text>{item.name}</Text>
-                            </Pressable>
+                            <View style={styles.carouselItem}>
+                                <Pressable onPress={() => {
+                                    navigation.navigate('Details', { restaurant: item });
+                                }}>
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={styles.carouselImage}
+                                    />
+                                </Pressable>
+                                <Text style={styles.carouselCaption}>{item.caption}</Text>
+                            </View>
+                        )}
+                        sliderWidth={width}
+                        itemWidth={width}
+                    />
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Búsqueda"
+                            value={searchText}
+                            onChangeText={handleSearch}
+                        />
+                        <FlatList
+                            data={suggestionsList}
+                            keyExtractor={(_, item) => item.toString()}
+                            renderItem={({ item }) => (
+                                <Pressable onPress={() => handleAutocompletePress(item)} style={styles.autocompleteItem}>
+                                    <Text>{item.name}</Text>
+                                </Pressable>
+                            )}
+                        />
+                    </View>
+                    <Carousel
+                        sliderWidth={width}
+                        itemWidth={width / itemsPerInterval}
+                        inactiveSlideScale={1}
+                        inactiveSlideOpacity={1}
+                        data={store.restaurant}
+                        autoPlay={true}
+                        scrollAnimationDuration={1000}
+                        renderItem={({ item }) => (
+                            <View style={styles.carouselItem}>
+                                <Pressable onPress={() => {
+                                    navigation.navigate('Details', { restaurant: item });
+                                }}>
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={{ width: width / itemsPerInterval, height: 130 }}
+                                    />
+                                </Pressable>
+                            </View>
                         )}
                     />
-                </View>
-                <Text>{"\n"}</Text>
-                <Carousel
-                    sliderWidth={width}
-                    itemWidth={width / itemsPerInterval}
-                    inactiveSlideScale={1}
-                    inactiveSlideOpacity={1}
-                    data={store.restaurant}
-                    autoPlay={true}
-                    scrollAnimationDuration={1000}
-                    renderItem={({ item }) => (
-                        <View>
-                            <Pressable onPress={() => {
-                                navigation.navigate('Details', { restaurant: item });
-                            }}>
-                                <Image
-                                    source={{ uri: item.image }}
-                                    style={{ width: width / itemsPerInterval, height: 130 }}
-                                />
-                            </Pressable>
-                            <Text>{item.caption}</Text>
-                        </View>
-                    )}
-                />
-                <Pressable onPress={() => {
-                    navigation.navigate('AllRestaurants');
-                }}
-                    style={{
-                        backgroundColor: 'lightblue',
-                        padding: 10,
-                        margin: 10,
-                        borderRadius: 10,
+                    <Pressable onPress={() => {
+                        navigation.navigate('AllRestaurants');
                     }}
-                >
-                    <Text>Ver listado de todos los restaurantes</Text>
-                </Pressable>
+                        style={styles.viewAllButton}
+                    >
+                        <Text style={{ textAlign: 'center' }}>Ver listado de todos los restaurantes</Text>
+                    </Pressable>
+                </KeyboardAwareScrollView>
 
-                <Text>{"\n"}</Text>
-                <Text>{"\n"}</Text>
-            </KeyboardAwareScrollView>
-
-        </SafeAreaView >
+            </SafeAreaView >
+        </TouchableWithoutFeedback>
 
     );
 };
-
-export default HomeScreen;
-
-
-
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        padding: 10,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: 'center',
+
+    },
+    carouselItem: {
+        marginBottom: 10,
+    },
+    carouselImage: {
+        width: width,
+        height: width / 1.2,
+        borderRadius: 10,
+    },
+    carouselCaption: {
+        marginTop: 5,
+        fontSize: 16,
+    },
+    searchContainer: {
+        marginBottom: 20,
+    },
+    searchInput: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingLeft: 10,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    autocompleteItem: {
+        padding: 10,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 10,
+        marginBottom: 5,
+    },
+    viewAllButton: {
+        backgroundColor: 'lightblue',
+        padding: 10,
+        margin: 10,
+        borderRadius: 10,
     },
 });
+
+export default HomeScreen;

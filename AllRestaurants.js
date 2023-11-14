@@ -1,5 +1,5 @@
-import { Text, FlatList, StyleSheet, View, Pressable } from 'react-native';
 import React, { useContext } from 'react';
+import { Text, FlatList, StyleSheet, View, Pressable, Image } from 'react-native';
 import { storeContext } from './StoreProvider';
 
 function AllRestaurants({ navigation }) {
@@ -7,43 +7,60 @@ function AllRestaurants({ navigation }) {
 
     return (
         <View style={styles.container}>
-
-            <Text>Esto es una prueba</Text>
-
             <FlatList
                 data={store.restaurant}
-                keyExtractor={(_, item) => item.toString()}
+                keyExtractor={(item) => item.name.toString()}
                 renderItem={({ item }) => (
-                    <Pressable onPress={() => {
-
-                        navigation.navigate('Details', { restaurant: item });
-                    }}
+                    <Pressable
+                        onPress={() => {
+                            navigation.navigate('Details', { restaurant: item });
+                        }}
                         style={styles.item}
-
                     >
-                        <Text>{item.name}</Text>
+                        <Image source={{ uri: item.image }} style={styles.image} />
+                        <View style={styles.textContainer}>
+                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.description}>{item.description}</Text>
+                        </View>
                     </Pressable>
-                )
-                }
-
+                )}
             />
-
-        </View >
+        </View>
     );
 }
-
-export default AllRestaurants;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        padding: 16,
     },
     item: {
-        backgroundColor: 'lightblue',
-        padding: 10,
-        marginVertical: 8,
-        marginHorizontal: 16,
+        backgroundColor: '#f0f0f0',
+        padding: 16,
+        marginBottom: 16,
         borderRadius: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    image: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        marginRight: 16,
+    },
+    textContainer: {
+        flex: 1,
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    description: {
+        fontSize: 16,
+        color: '#555',
     },
 });
+
+export default AllRestaurants;
