@@ -42,7 +42,6 @@ function HomeScreen({ navigation }) {
     };
 
     const dismissSuggestions = () => {
-        // Limpiar la lista de sugerencias cuando el usuario toca fuera del input
         setSuggestionsList([]);
     };
 
@@ -77,6 +76,13 @@ function HomeScreen({ navigation }) {
                         sliderWidth={width}
                         itemWidth={width}
                     />
+                    <Pressable onPress={() => {
+                        navigation.navigate('PrintAll', { showRestaurants: false });
+                    }}
+                        style={styles.viewAllButton}
+                    >
+                        <Text style={{ textAlign: 'center' }}>Ver listado de todos los shows</Text>
+                    </Pressable>
                     <View style={styles.searchContainer}>
                         <TextInput
                             style={styles.searchInput}
@@ -116,7 +122,7 @@ function HomeScreen({ navigation }) {
                         )}
                     />
                     <Pressable onPress={() => {
-                        navigation.navigate('AllRestaurants');
+                        navigation.navigate('PrintAll', { showRestaurants: true });
                     }}
                         style={styles.viewAllButton}
                     >

@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import DetailsScreen from './DetailsScreen';
 import HomeScreen from './HomeScreen';
 import StoreProvider from './StoreProvider';
-import AllRestaurants from './AllRestaurants'
+import PrintAll from './PrintAll'
 
 const Stack = createStackNavigator();
 
@@ -13,7 +13,7 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="AllRestaurants" component={AllRestaurants} />
+          <Stack.Screen name="PrintAll" component={PrintAll} />
           <Stack.Screen name="Details" component={DetailsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
