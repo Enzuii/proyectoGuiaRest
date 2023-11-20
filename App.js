@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import DetailsScreen from './DetailsScreen';
 import HomeScreen from './HomeScreen';
 import StoreProvider from './StoreProvider';
-import PrintAll from './PrintAll'
+import PrintAll from './PrintAll';
 
 const Stack = createStackNavigator();
 

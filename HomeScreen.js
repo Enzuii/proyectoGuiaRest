@@ -2,7 +2,6 @@ import {
     View,
     StyleSheet,
     Text,
-    SafeAreaView,
     Image,
     Pressable,
     Dimensions,
@@ -15,8 +14,6 @@ import Carousel from 'react-native-snap-carousel';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { storeContext } from './StoreProvider';
 
-const itemsPerInterval = 3;
-
 const width = Dimensions.get('window').width;
 
 function HomeScreen({ navigation }) {
@@ -26,7 +23,7 @@ function HomeScreen({ navigation }) {
     const [suggestionsList, setSuggestionsList] = useState([]);
 
     const getSuggestions = (query) => {
-        const filteredSuggestions = store.restaurant.filter((restaurant) =>
+        const filteredSuggestions = store.showRestaurant.filter((restaurant) =>
             restaurant.name.toLowerCase().includes(query.toLowerCase())
         );
         setSuggestionsList(filteredSuggestions);
@@ -47,101 +44,81 @@ function HomeScreen({ navigation }) {
 
     return (
         <TouchableWithoutFeedback onPress={dismissSuggestions}>
-            <SafeAreaView style={styles.container}>
-                <KeyboardAwareScrollView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={{ flex: 1 }}
-                    keyboardShouldPersistTaps='always'
-                >
-                    <Text style={styles.headerText}>Guía Rest</Text>
-                    <Carousel
-                        loop={true}
-                        autoplay={true}
-                        data={store.show}
-                        autoPlay={true}
-                        scrollAnimationDuration={1000}
-                        renderItem={({ item }) => (
-                            <View style={styles.carouselItem}>
-                                <Pressable onPress={() => {
-                                    navigation.navigate('Details', { restaurant: item });
-                                }}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={styles.carouselImage}
-                                    />
-                                </Pressable>
-                                <Text style={styles.carouselCaption}>{item.caption}</Text>
-                            </View>
-                        )}
-                        sliderWidth={width}
-                        itemWidth={width}
+            <KeyboardAwareScrollView
+                style={{ flex: 1 }}
+            >
+                <Text style={styles.headerText}>Guía Rest</Text>
+                <Carousel
+                    loop={true}
+                    autoplay={true}
+                    data={store.show}
+                    autoPlay={true}
+                    scrollAnimationDuration={1000}
+                    renderItem={({ item }) => (
+                        <View style={styles.carouselItem}>
+                            <Pressable onPress={() => {
+                                navigation.navigate('Details', { restaurant: item });
+                            }}>
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={styles.carouselImage}
+                                />
+                            </Pressable>
+                        </View>
+                    )}
+                    sliderWidth={width}
+                    itemWidth={width}
+                />
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Búsqueda de shows y restaurantes"
+                        value={searchText}
+                        onChangeText={handleSearch}
                     />
-                    <Pressable onPress={() => {
-                        navigation.navigate('PrintAll', { showRestaurants: false });
-                    }}
-                        style={styles.viewAllButton}
-                    >
-                        <Text style={{ textAlign: 'center' }}>Ver listado de todos los shows</Text>
-                    </Pressable>
-                    <View style={styles.searchContainer}>
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Búsqueda"
-                            value={searchText}
-                            onChangeText={handleSearch}
-                        />
-                        <FlatList
-                            data={suggestionsList}
-                            keyExtractor={(_, item) => item.toString()}
-                            renderItem={({ item }) => (
-                                <Pressable onPress={() => handleAutocompletePress(item)} style={styles.autocompleteItem}>
-                                    <Text>{item.name}</Text>
-                                </Pressable>
-                            )}
-                        />
-                    </View>
-                    <Carousel
-                        sliderWidth={width}
-                        itemWidth={width / itemsPerInterval}
-                        inactiveSlideScale={1}
-                        inactiveSlideOpacity={1}
-                        data={store.restaurant}
-                        autoPlay={true}
-                        scrollAnimationDuration={1000}
+                    <FlatList
+                        data={suggestionsList}
+                        keyExtractor={(_, item) => item.toString()}
                         renderItem={({ item }) => (
-                            <View style={styles.carouselItem}>
-                                <Pressable onPress={() => {
-                                    navigation.navigate('Details', { restaurant: item });
-                                }}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={{ width: width / itemsPerInterval, height: 130 }}
-                                    />
-                                </Pressable>
-                            </View>
+                            <Pressable onPress={() => handleAutocompletePress(item)} style={styles.autocompleteItem}>
+                                <Text>{item.name}</Text>
+                            </Pressable>
                         )}
                     />
-                    <Pressable onPress={() => {
-                        navigation.navigate('PrintAll', { showRestaurants: true });
-                    }}
-                        style={styles.viewAllButton}
-                    >
-                        <Text style={{ textAlign: 'center' }}>Ver listado de todos los restaurantes</Text>
-                    </Pressable>
-                </KeyboardAwareScrollView>
+                </View>
+                <Carousel
+                    sliderWidth={width}
+                    itemWidth={width / 3}
+                    data={store.restaurant}
+                    loop={true}
 
-            </SafeAreaView >
+                    renderItem={({ item }) => (
+                        <View style={styles.carouselItem}>
+                            <Pressable onPress={() => {
+                                navigation.navigate('Details', { restaurant: item });
+                            }}>
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={{ width: width / 3, height: 130 }}
+                                />
+                            </Pressable>
+                        </View>
+                    )}
+                />
+                <Pressable onPress={() => {
+                    navigation.navigate('PrintAll');
+                }}
+                    style={styles.viewAllButton}
+                >
+                    <Text style={{ textAlign: 'center' }}>Ver listado de todos los restaurantes y shows</Text>
+                </Pressable>
+            </KeyboardAwareScrollView>
         </TouchableWithoutFeedback>
 
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 10,
-    },
     headerText: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -150,7 +127,7 @@ const styles = StyleSheet.create({
 
     },
     carouselItem: {
-        marginBottom: 10,
+        marginBottom: 20,
     },
     carouselImage: {
         width: width,
@@ -170,7 +147,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingLeft: 10,
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 7,
+        marginTop: 7,
     },
     autocompleteItem: {
         padding: 10,
@@ -182,7 +160,7 @@ const styles = StyleSheet.create({
     viewAllButton: {
         backgroundColor: 'lightblue',
         padding: 10,
-        margin: 10,
+        margin: 15,
         borderRadius: 10,
     },
 });

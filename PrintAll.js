@@ -2,18 +2,13 @@ import React, { useContext } from 'react';
 import { Text, FlatList, StyleSheet, View, Pressable, Image } from 'react-native';
 import { storeContext } from './StoreProvider';
 
-function PrintAll({ route, navigation }) {
-    const { showRestaurants } = route.params;
-    const [store, dispatch] = useContext(storeContext);
+function PrintAll({ navigation }) {
+  const [store, dispatch] = useContext(storeContext);
 
-    const dataToRender = showRestaurants ? store.restaurant : store.show;
-
-    console.log(showRestaurants);
-
-    return (
+  return (
     <View style={styles.container}>
       <FlatList
-        data={dataToRender}
+        data={store.showRestaurant}
         keyExtractor={(item) => item.name.toString()}
         renderItem={({ item }) => (
           <Pressable

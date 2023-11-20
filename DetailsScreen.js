@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 
 function DetailsScreen({ route }) {
   const { restaurant } = route.params;
 
-  const width = Dimensions.get('window').width;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -13,9 +12,9 @@ function DetailsScreen({ route }) {
         <Text style={styles.name}>{restaurant.name}</Text>
         <Text style={styles.description}>{restaurant.description}</Text>
         <Text style={styles.label}>Dirección:</Text>
-        <Text style={styles.text}>Calle 24</Text>
+        <Text style={styles.text}>{restaurant.adress}</Text>
         <Text style={styles.label}>Horario:</Text>
-        <Text style={styles.text}>17:00</Text>
+        <Text style={styles.text}>{restaurant.schedule}</Text>
       </View>
     </ScrollView>
   );

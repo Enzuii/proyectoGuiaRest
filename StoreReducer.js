@@ -1,10 +1,12 @@
 import { restaurantData } from "./data/restaurantData";
 import { showData } from "./data/showData";
+import { showRestaurantData } from "./data/showRestaurantData";
 
 const initialStore = () => {
   const store = {
     show: showData,
     restaurant: restaurantData,
+    showRestaurant: showRestaurantData,
   };
   return store;
 };
@@ -20,6 +22,7 @@ const storeReducer = (state, action) => {
         ...state,
         restaurant: state.restaurant.push(...action.payload),
         show: state.show.push(...action.payload),
+        showRestaurant: state.showRestaurant.push(...action.payload),
       };
     default:
       return state;
